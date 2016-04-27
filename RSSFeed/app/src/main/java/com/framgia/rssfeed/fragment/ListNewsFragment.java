@@ -1,24 +1,18 @@
 package com.framgia.rssfeed.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.framgia.rssfeed.GridViewItemDecoration;
 import com.framgia.rssfeed.ListViewItemDecoration;
 import com.framgia.rssfeed.R;
+import com.framgia.rssfeed.adapter.ListNewsAdapter;
 import com.framgia.rssfeed.base.BaseFragment;
 import com.framgia.rssfeed.bean.News;
+import com.framgia.rssfeed.data.local.DatabaseHandler;
 import com.framgia.rssfeed.utility.LoadDataUtil;
 import com.framgia.rssfeed.utility.NetworkUtil;
 import com.framgia.rssfeed.widget.LayoutNotifyState;
@@ -28,7 +22,7 @@ import java.util.ArrayList;
 /**
  * Created by yue on 25/04/2016.
  */
-public class ListNewsFragment extends BaseFragment {
+public class ListNewsFragment extends BaseFragment implements ListNewsAdapter.onClickNewsListener {
 
     public final static String URL = "http://vnexpress.net/rss/thoi-su.rss";
     public final static String URL_2 = "https://tinhte.vn/rss/";
@@ -57,6 +51,7 @@ public class ListNewsFragment extends BaseFragment {
         mListNews.setLayoutManager(new LinearLayoutManager(getActivity()));
         mListNews.addItemDecoration(mListViewItemDecoration);
         mAdapter = new ListNewsAdapter(getActivity(), mListNews.getLayoutManager());
+        mAdapter.setOnClickNewsListener(this);
         mListNews.setAdapter(mAdapter);
     }
 
@@ -119,77 +114,10 @@ public class ListNewsFragment extends BaseFragment {
         });
     }
 
-    private static class ListNewsAdapter extends RecyclerView.Adapter<ListNewsAdapter.ItemHolder> {
 
-        private Context mContext;
-        private ArrayList<News> mNewsList;
-        private RecyclerView.LayoutManager mLayoutManager;
-
-        public ListNewsAdapter(Context context, RecyclerView.LayoutManager layoutManager) {
-            mNewsList = new ArrayList<>();
-            mLayoutManager = layoutManager;
-            mContext = context;
-        }
-
-        @Override
-        public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView;
-            if (mLayoutManager instanceof GridLayoutManager) {
-                itemView = LayoutInflater.from(mContext).inflate(R.layout.item_grid_news, parent, false);
-            } else {
-                itemView = LayoutInflater.from(mContext).inflate(R.layout.item_list_news, parent, false);
-            }
-            return new ItemHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(ItemHolder holder, int position) {
-            News news = mNewsList.get(position);
-            if (TextUtils.isEmpty(news.getImageUrl())) {
-                holder.imageNews.setVisibility(View.GONE);
-            } else {
-                holder.imageNews.setVisibility(View.VISIBLE);
-                Glide.with(mContext).load(news.getImageUrl()).centerCrop().into(holder.imageNews);
-            }
-            holder.newsTitle.setText(news.getTitle());
-            holder.description.setText(Html.fromHtml(news.getDescription()));
-        }
-
-        @Override
-        public int getItemCount() {
-            return mNewsList.size();
-        }
-
-        public void addItem(News news) {
-            mNewsList.add(news);
-            notifyItemInserted(mNewsList.size() - 1);
-        }
-
-        public void addItems(ArrayList<News> newsList) {
-            mNewsList.addAll(newsList);
-            notifyDataSetChanged();
-        }
-
-        public void changeLayoutManager(RecyclerView.LayoutManager layoutManager) {
-            mLayoutManager = layoutManager;
-            notifyDataSetChanged();
-        }
-
-        class ItemHolder extends RecyclerView.ViewHolder {
-
-            public TextView newsTitle;
-            public ImageView imageNews;
-            public TextView description;
-
-            public ItemHolder(View itemView) {
-                super(itemView);
-                newsTitle = (TextView) itemView.findViewById(R.id.newsTitle);
-                imageNews = (ImageView) itemView.findViewById(R.id.image_news);
-                description = (TextView) itemView.findViewById(R.id.description);
-                newsTitle.setSelected(true);
-            }
-        }
-
+    @Override
+    public void onClickNews(News news) {
+        DatabaseHandler.getInstance(getActivity()).insertNewsInfo(news);
     }
 
 }

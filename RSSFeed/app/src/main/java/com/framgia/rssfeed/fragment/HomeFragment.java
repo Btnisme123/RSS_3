@@ -52,8 +52,8 @@ public class HomeFragment extends BaseFragment {
 
     private void setupViewPager() {
         mTabFragmentAdapter = new TabFragmentAdapter(getChildFragmentManager());
-        mTabFragmentAdapter.addFragment(new NewsFragment(), getString(R.string.NEWS));
-        mTabFragmentAdapter.addFragment(new HistoryFragment(), getString(R.string.HISTORY));
+        mTabFragmentAdapter.addFragment(new NewsFragment(), getString(R.string.news_uppercase));
+        mTabFragmentAdapter.addFragment(new HistoryFragment(), getString(R.string.history_uppercase));
         mViewPager.setAdapter(mTabFragmentAdapter);
     }
 

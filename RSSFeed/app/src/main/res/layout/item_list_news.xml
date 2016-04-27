@@ -16,6 +16,7 @@
             android:layout_marginLeft="@dimen/common_size_10" />
 
         <LinearLayout
+            android:id="@+id/item_news_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
