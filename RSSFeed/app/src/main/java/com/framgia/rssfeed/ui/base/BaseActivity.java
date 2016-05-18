@@ -21,7 +21,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         findViews();
         setSupportActionBar(mToolbar);
-        addFragment();
+        if (savedInstanceState == null) addFragment();
         onCreateContentView();
         mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
     }
