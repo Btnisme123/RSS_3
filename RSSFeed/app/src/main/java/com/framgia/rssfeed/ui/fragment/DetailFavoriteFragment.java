@@ -19,6 +19,7 @@ import com.framgia.rssfeed.ui.adapter.ListNewsAdapter;
 import com.framgia.rssfeed.ui.base.BaseFragment;
 import com.framgia.rssfeed.ui.base.Constants;
 import com.framgia.rssfeed.ui.decoration.ListViewItemDecoration;
+import com.framgia.rssfeed.ui.widget.LayoutNotifyState;
 import com.framgia.rssfeed.util.MonitorWorkerThreadUtil;
 import com.framgia.rssfeed.util.OnRecyclerViewItemClickListener;
 import com.framgia.rssfeed.util.WorkerThread;
@@ -27,6 +28,7 @@ public class DetailFavoriteFragment extends Fragment {
     public static final String TAG_DETAIL_FAVORITE_FRAGMENT = "detail_favorite_fragment";
     private RecyclerView mRecyclerView;
     private ListNewsAdapter mListFavoriteAdapter;
+    private LayoutNotifyState mLayoutNoItem;
     private int mIndex;
     private OnRecyclerViewItemClickListener mOnRecyclerViewItemClickListener = new OnRecyclerViewItemClickListener() {
         @Override
@@ -58,6 +60,7 @@ public class DetailFavoriteFragment extends Fragment {
 
     public void findView(View view) {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_news);
+        mLayoutNoItem = (LayoutNotifyState) view.findViewById(R.id.notify_state_layout);
     }
 
     public void getData() {
@@ -67,6 +70,7 @@ public class DetailFavoriteFragment extends Fragment {
     }
 
     public void setupRecyclerView(Context context) {
+
         ListViewItemDecoration mListViewItemDecoration = new ListViewItemDecoration(context);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mRecyclerView.addItemDecoration(mListViewItemDecoration);
@@ -74,6 +78,12 @@ public class DetailFavoriteFragment extends Fragment {
         getData();
         mListFavoriteAdapter.setOnRecyclerViewItemClickListener(mOnRecyclerViewItemClickListener);
         mRecyclerView.setAdapter(mListFavoriteAdapter);
+        if (mListFavoriteAdapter.getItemCount() > 0) {
+            mLayoutNoItem.hide(mRecyclerView);
+        } else {
+            mLayoutNoItem.show(LayoutNotifyState.TYPE_NO_DATA_LAYOUT, mRecyclerView);
+        }
+
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
